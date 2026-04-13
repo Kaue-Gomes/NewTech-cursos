@@ -58,25 +58,6 @@ O sistema permite que usuários se cadastrem, realizem login, recuperem senha e,
 
 ---
 
-## 🔐 Funcionalidades Implementadas
-
-### Autenticação
-
-* ✅ Login com validação
-* ✅ Cadastro de usuário
-* ✅ Recuperação de senha
-* ✅ Validação de email e senha
-
----
-
-## 📱 Telas do Sistema
-
-* 🔐 Login
-* 📝 Cadastro
-* 🔑 Recuperação de senha
-
----
-
 ## 🚀 Como Executar o Projeto
 
 ### 1. Clonar o repositório
@@ -127,19 +108,6 @@ src/
  ├── App.js
  ├── index.js
 ```
-
----
-
-## 🔮 Próximas Funcionalidades
-
-* Integração com backend (FastAPI + JWT)
-* Página Home com cursos
-* Página de detalhes do curso
-* Integração com pagamento via WhatsApp
-* Dashboard administrativo
-* Área do aluno
-
----
 
 ## 📄 Licença
 

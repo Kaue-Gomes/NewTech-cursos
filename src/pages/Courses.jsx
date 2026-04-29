@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useMemo, useState } from "react";
+import { ArrowLeft, Library, Search, SearchX } from "lucide-react";
 import Header from "../components/Header.jsx";
 import Footer from "../components/Footer.jsx";
 import CourseCard from "../components/CourseCard.jsx";
@@ -29,15 +30,24 @@ export default function Courses() {
       <Header />
       <main className="page page-transition">
         <div className="container">
-          <Link to="/" className="back-link">← Voltar para Home</Link>
+          <Link to="/" className="back-link">
+            <ArrowLeft />
+            Voltar para Home
+          </Link>
 
           <div className="page-header">
-            <p className="eyebrow">Todos os cursos</p>
-            <h1>Catálogo NewTech</h1>
-            <p>Escolha um curso, veja os detalhes e faça sua inscrição na plataforma.</p>
+            <span className="eyebrow eyebrow-blue">
+              <Library size={14} /> Catálogo
+            </span>
+            <h1>Cursos NewTech</h1>
+            <p>
+              Escolha um curso, veja os detalhes e faça sua inscrição diretamente
+              na plataforma. Conteúdo profissionalizante feito para sua evolução.
+            </p>
           </div>
 
           <div className="search-box">
+            <Search />
             <input
               type="text"
               placeholder="Pesquisar por curso, instrutor ou nível..."
@@ -48,8 +58,14 @@ export default function Courses() {
 
           {filteredCourses.length === 0 ? (
             <div className="empty-state">
-              <h2>Nenhum curso encontrado.</h2>
-              <p>Tente pesquisar por outro termo.</p>
+              <div className="empty-state-icon">
+                <SearchX />
+              </div>
+              <h2>Nenhum curso encontrado</h2>
+              <p>Tente pesquisar por outro termo, NR ou área.</p>
+              <button className="btn btn-outline" onClick={() => setSearch("")}>
+                Limpar pesquisa
+              </button>
             </div>
           ) : (
             <div className="courses-grid">

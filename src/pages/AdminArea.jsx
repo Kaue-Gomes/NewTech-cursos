@@ -1,8 +1,36 @@
 import { useEffect, useMemo, useState } from "react";
+import {
+  BookOpen,
+  Edit3,
+  GraduationCap,
+  IdCard,
+  Image,
+  Layers,
+  LayoutDashboard,
+  Mail,
+  MapPin,
+  Phone,
+  PlayCircle,
+  PlusCircle,
+  Search,
+  SearchX,
+  Settings,
+  Sparkles,
+  Trash2,
+  Users,
+  Wrench,
+  X
+} from "lucide-react";
 import Header from "../components/Header.jsx";
 import Footer from "../components/Footer.jsx";
 import { getStudents } from "../services/auth.js";
-import { getStudentEnrollments, addCourse, deleteCourse, getCourses, updateCourse } from "../services/storage.js";
+import {
+  addCourse,
+  deleteCourse,
+  getCourses,
+  getStudentEnrollments,
+  updateCourse
+} from "../services/storage.js";
 
 const initialForm = {
   title: "",
@@ -14,6 +42,12 @@ const initialForm = {
   description: "",
   content: ""
 };
+
+const TABS = [
+  { id: "cadastrar", label: "Cadastrar curso", icon: PlusCircle },
+  { id: "gerenciar", label: "Gerenciar cursos", icon: Layers },
+  { id: "alunos", label: "Alunos cadastrados", icon: Users }
+];
 
 export default function AdminArea() {
   const [courses, setCourses] = useState([]);
@@ -51,6 +85,13 @@ export default function AdminArea() {
       (student.phone || "").toLowerCase().includes(term)
     );
   }, [students, studentSearch]);
+
+  const totalEnrollments = useMemo(() => {
+    return students.reduce(
+      (acc, student) => acc + getStudentEnrollments(student.email).length,
+      0
+    );
+  }, [students, courses]);
 
   function handleChange(event) {
     setForm({ ...form, [event.target.name]: event.target.value });
@@ -116,199 +157,262 @@ export default function AdminArea() {
         <div className="container">
           <div className="admin-dashboard-header">
             <div>
-              <p className="eyebrow">Área administrativa</p>
+              <span className="eyebrow eyebrow-light">
+                <LayoutDashboard size={14} /> Painel administrativo
+              </span>
               <h1>Painel ADM NewTech</h1>
               <p>Gerencie cursos, edições e cadastros de alunos em um só lugar.</p>
             </div>
 
             <div className="admin-kpis">
-              <div><strong>{courses.length}</strong><span>Cursos</span></div>
-              <div><strong>{students.length}</strong><span>Alunos</span></div>
+              <div>
+                <strong>{courses.length}</strong>
+                <span><BookOpen size={12} /> Cursos</span>
+              </div>
+              <div>
+                <strong>{students.length}</strong>
+                <span><Users size={12} /> Alunos</span>
+              </div>
+              <div>
+                <strong>{totalEnrollments}</strong>
+                <span><Sparkles size={12} /> Inscrições</span>
+              </div>
             </div>
           </div>
 
-          <div className="admin-tabs">
-            <button className={activeTab === "cadastrar" ? "active" : ""} onClick={() => setActiveTab("cadastrar")}>
-              {editingId ? "Editar curso" : "Cadastrar curso"}
-            </button>
-            <button className={activeTab === "gerenciar" ? "active" : ""} onClick={() => setActiveTab("gerenciar")}>
-              Gerenciar cursos
-            </button>
-            <button className={activeTab === "alunos" ? "active" : ""} onClick={() => setActiveTab("alunos")}>
-              Alunos cadastrados
-            </button>
-          </div>
-
-          {activeTab === "cadastrar" && (
-            <section className="admin-form-card separated">
-              <h2>{editingId ? "Editar curso cadastrado" : "Cadastrar novo curso"}</h2>
-              <p>
-                Preencha as informações necessárias do curso. Ao salvar, ele aparece automaticamente na Home e no catálogo.
-              </p>
-
-              <form onSubmit={handleSubmit} className="admin-form">
-                <label>
-                  Título do curso
-                  <input name="title" value={form.title} onChange={handleChange} required />
-                </label>
-
-                <div className="form-row">
-                  <label>
-                    Carga horária
-                    <input name="workload" value={form.workload} onChange={handleChange} placeholder="Ex: 40h" required />
-                  </label>
-
-                  <label>
-                    Quantidade de aulas
-                    <input name="lessons" value={form.lessons} onChange={handleChange} placeholder="Ex: 18 aulas" required />
-                  </label>
-                </div>
-
-                <div className="form-row">
-                  <label>
-                    Nível
-                    <input name="level" value={form.level} onChange={handleChange} placeholder="Ex: Básico" required />
-                  </label>
-
-                  <label>
-                    Instrutor
-                    <input name="instructor" value={form.instructor} onChange={handleChange} required />
-                  </label>
-                </div>
-
-                <label>
-                  URL da imagem do curso
-                  <input name="image" value={form.image} onChange={handleChange} placeholder="Cole uma URL de imagem" />
-                </label>
-
-                <label>
-                  Descrição
-                  <textarea name="description" value={form.description} onChange={handleChange} required />
-                </label>
-
-                <label>
-                  Conteúdo programático
-                  <textarea name="content" value={form.content} onChange={handleChange} required />
-                </label>
-
-                <div className="form-actions">
-                  <button className="btn btn-primary">
-                    {editingId ? "Salvar edição" : "Cadastrar curso"}
-                  </button>
-
-                  {editingId && (
-                    <button type="button" className="btn btn-outline" onClick={cancelEdit}>
-                      Cancelar edição
-                    </button>
-                  )}
-                </div>
-              </form>
-            </section>
-          )}
-
-          {activeTab === "gerenciar" && (
-            <section className="admin-section-card">
-              <div className="section-title-row">
-                <div>
-                  <h2>Cursos cadastrados</h2>
-                  <p>Total: {courses.length}</p>
-                </div>
-              </div>
-
-              <div className="search-box admin-search">
-                <input
-                  type="text"
-                  placeholder="Pesquisar curso cadastrado..."
-                  value={search}
-                  onChange={(event) => setSearch(event.target.value)}
-                />
-              </div>
-
-              <div className="admin-course-table">
-                {filteredCourses.length === 0 ? (
-                  <div className="empty-state">
-                    <h2>Nenhum curso encontrado.</h2>
-                    <p>Tente pesquisar por outro termo.</p>
-                  </div>
-                ) : (
-                  filteredCourses.map((course) => (
-                    <article className="admin-course-row" key={course.id}>
-                      <img src={course.image} alt={course.title} />
-                      <div className="admin-course-info">
-                        <h3>{course.title}</h3>
-                        <p>{course.workload} • {course.lessons} • {course.level}</p>
-                        <span>{course.instructor}</span>
-                      </div>
-                      <div className="admin-buttons">
-                        <button className="btn btn-outline" onClick={() => handleEdit(course)}>Editar</button>
-                        <button className="btn btn-danger" onClick={() => handleDelete(course.id)}>Excluir</button>
-                      </div>
-                    </article>
-                  ))
-                )}
-              </div>
-            </section>
-          )}
-
-          {activeTab === "alunos" && (
-            <section className="admin-section-card">
-              <div className="section-title-row">
-                <div>
-                  <h2>Alunos cadastrados</h2>
-                  <p>Visualize os dados dos alunos e suas inscrições.</p>
-                </div>
-              </div>
-
-              <div className="search-box admin-search">
-                <input
-                  type="text"
-                  placeholder="Pesquisar aluno por nome, e-mail ou telefone..."
-                  value={studentSearch}
-                  onChange={(event) => setStudentSearch(event.target.value)}
-                />
-              </div>
-
-              <div className="students-grid">
-                {filteredStudents.map((student) => {
-                  const enrollments = getStudentEnrollments(student.email);
-
+          <div className="admin-layout">
+            <aside className="account-sidebar">
+              <nav className="admin-tabs">
+                {TABS.map((tab) => {
+                  const Icon = tab.icon;
                   return (
-                    <article className="student-card" key={student.id}>
-                      <div className="student-card-header">
-                        <div className="student-avatar">
-                          {student.name
-                            .split(" ")
-                            .slice(0, 2)
-                            .map((part) => part[0])
-                            .join("")
-                            .toUpperCase()}
-                        </div>
-                        <div>
-                          <h3>{student.name}</h3>
-                          <p>{student.email}</p>
-                        </div>
-                      </div>
-
-                      <div className="student-info-list">
-                        <span><strong>Telefone:</strong> {student.phone || "Não informado"}</span>
-                        <span><strong>Documento:</strong> {student.document || "Não informado"}</span>
-                        <span><strong>Cidade:</strong> {student.address?.city || "Não informada"} - {student.address?.state || ""}</span>
-                        <span><strong>Cursos inscritos:</strong> {enrollments.length}</span>
-                      </div>
-
-                      {enrollments.length > 0 && (
-                        <div className="student-courses">
-                          {enrollments.map((item) => (
-                            <small key={item.id}>{item.course.title}</small>
-                          ))}
-                        </div>
-                      )}
-                    </article>
+                    <button
+                      key={tab.id}
+                      className={activeTab === tab.id ? "active" : ""}
+                      onClick={() => setActiveTab(tab.id)}
+                    >
+                      <Icon />
+                      {tab.id === "cadastrar" && editingId ? "Editar curso" : tab.label}
+                    </button>
                   );
                 })}
-              </div>
-            </section>
-          )}
+              </nav>
+            </aside>
+
+            <div>
+              {activeTab === "cadastrar" && (
+                <section className="admin-form-card separated">
+                  <div className="account-card-head">
+                    <h2>{editingId ? "Editar curso cadastrado" : "Cadastrar novo curso"}</h2>
+                    <p>
+                      Preencha as informações necessárias do curso. Ao salvar, ele aparece automaticamente na Home e no catálogo.
+                    </p>
+                  </div>
+
+                  <form onSubmit={handleSubmit} className="admin-form">
+                    <label>
+                      Título do curso
+                      <div className="input-with-icon">
+                        <BookOpen />
+                        <input name="title" value={form.title} onChange={handleChange} placeholder="Ex: NR10 Segurança em Instalações Elétricas" required />
+                      </div>
+                    </label>
+
+                    <div className="form-row">
+                      <label>
+                        Carga horária
+                        <input name="workload" value={form.workload} onChange={handleChange} placeholder="Ex: 40h" required />
+                      </label>
+
+                      <label>
+                        Quantidade de aulas
+                        <input name="lessons" value={form.lessons} onChange={handleChange} placeholder="Ex: 18 aulas" required />
+                      </label>
+                    </div>
+
+                    <div className="form-row">
+                      <label>
+                        Nível
+                        <input name="level" value={form.level} onChange={handleChange} placeholder="Ex: Básico ao intermediário" required />
+                      </label>
+
+                      <label>
+                        Instrutor
+                        <input name="instructor" value={form.instructor} onChange={handleChange} placeholder="Nome do instrutor" required />
+                      </label>
+                    </div>
+
+                    <label>
+                      URL da imagem do curso
+                      <div className="input-with-icon">
+                        <Image />
+                        <input name="image" value={form.image} onChange={handleChange} placeholder="Cole uma URL de imagem (opcional)" />
+                      </div>
+                    </label>
+
+                    <label>
+                      Descrição
+                      <textarea name="description" value={form.description} onChange={handleChange} placeholder="Resumo do curso, público-alvo e objetivos." required />
+                    </label>
+
+                    <label>
+                      Conteúdo programático
+                      <textarea name="content" value={form.content} onChange={handleChange} placeholder="Tópicos, módulos, conteúdo abordado." required />
+                    </label>
+
+                    <div className="form-actions">
+                      <button type="submit" className="btn btn-primary">
+                        {editingId ? <Wrench /> : <PlusCircle />}
+                        {editingId ? "Salvar edição" : "Cadastrar curso"}
+                      </button>
+
+                      {editingId && (
+                        <button type="button" className="btn btn-outline" onClick={cancelEdit}>
+                          <X />
+                          Cancelar edição
+                        </button>
+                      )}
+                    </div>
+                  </form>
+                </section>
+              )}
+
+              {activeTab === "gerenciar" && (
+                <section className="admin-section-card">
+                  <div className="account-card-head">
+                    <h2>Cursos cadastrados</h2>
+                    <p>Total: {courses.length} curso{courses.length !== 1 ? "s" : ""} na plataforma.</p>
+                  </div>
+
+                  <div className="search-box">
+                    <Search />
+                    <input
+                      type="text"
+                      placeholder="Pesquisar curso por título, instrutor ou nível..."
+                      value={search}
+                      onChange={(event) => setSearch(event.target.value)}
+                    />
+                  </div>
+
+                  <div className="admin-course-table">
+                    {filteredCourses.length === 0 ? (
+                      <div className="empty-state">
+                        <div className="empty-state-icon">
+                          <SearchX />
+                        </div>
+                        <h2>Nenhum curso encontrado</h2>
+                        <p>Tente pesquisar por outro termo.</p>
+                      </div>
+                    ) : (
+                      filteredCourses.map((course) => (
+                        <article className="admin-course-row" key={course.id}>
+                          <img src={course.image} alt={course.title} />
+                          <div className="admin-course-info">
+                            <h3>{course.title}</h3>
+                            <p>{course.workload} • {course.lessons} • {course.level}</p>
+                            <span>{course.instructor}</span>
+                          </div>
+                          <div className="admin-buttons">
+                            <button className="btn btn-outline sm" onClick={() => handleEdit(course)}>
+                              <Edit3 />
+                              Editar
+                            </button>
+                            <button className="btn btn-danger sm" onClick={() => handleDelete(course.id)}>
+                              <Trash2 />
+                              Excluir
+                            </button>
+                          </div>
+                        </article>
+                      ))
+                    )}
+                  </div>
+                </section>
+              )}
+
+              {activeTab === "alunos" && (
+                <section className="admin-section-card">
+                  <div className="account-card-head">
+                    <h2>Alunos cadastrados</h2>
+                    <p>Visualize os dados dos alunos e suas inscrições nos cursos.</p>
+                  </div>
+
+                  <div className="search-box">
+                    <Search />
+                    <input
+                      type="text"
+                      placeholder="Pesquisar aluno por nome, e-mail ou telefone..."
+                      value={studentSearch}
+                      onChange={(event) => setStudentSearch(event.target.value)}
+                    />
+                  </div>
+
+                  {filteredStudents.length === 0 ? (
+                    <div className="empty-state">
+                      <div className="empty-state-icon">
+                        <SearchX />
+                      </div>
+                      <h2>Nenhum aluno encontrado</h2>
+                      <p>Tente pesquisar por outro termo.</p>
+                    </div>
+                  ) : (
+                    <div className="students-grid">
+                      {filteredStudents.map((student) => {
+                        const enrollments = getStudentEnrollments(student.email);
+                        const initials = student.name
+                          .split(" ")
+                          .slice(0, 2)
+                          .map((part) => part[0])
+                          .join("")
+                          .toUpperCase();
+
+                        return (
+                          <article className="student-card" key={student.id}>
+                            <div className="student-card-header">
+                              <div className="student-avatar">{initials}</div>
+                              <div>
+                                <h3>{student.name}</h3>
+                                <p>{student.email}</p>
+                              </div>
+                            </div>
+
+                            <div className="student-info-list">
+                              <span>
+                                <Phone />
+                                <span><strong>Telefone:</strong> {student.phone || "Não informado"}</span>
+                              </span>
+                              <span>
+                                <IdCard />
+                                <span><strong>Documento:</strong> {student.document || "Não informado"}</span>
+                              </span>
+                              <span>
+                                <MapPin />
+                                <span>
+                                  <strong>Cidade:</strong> {student.address?.city || "Não informada"}
+                                  {student.address?.state ? ` - ${student.address.state}` : ""}
+                                </span>
+                              </span>
+                              <span>
+                                <PlayCircle />
+                                <span><strong>Cursos inscritos:</strong> {enrollments.length}</span>
+                              </span>
+                            </div>
+
+                            {enrollments.length > 0 && (
+                              <div className="student-courses">
+                                {enrollments.map((item) => (
+                                  <small key={item.id}>{item.course.title}</small>
+                                ))}
+                              </div>
+                            )}
+                          </article>
+                        );
+                      })}
+                    </div>
+                  )}
+                </section>
+              )}
+            </div>
+          </div>
         </div>
       </main>
       <Footer />

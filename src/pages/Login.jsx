@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Header from "../components/Header.jsx";
 import Footer from "../components/Footer.jsx";
+import logoNewTech from "../assets/logonewtech.png";
 import { login } from "../services/auth.js";
 
 export default function Login() {
@@ -28,10 +29,13 @@ export default function Login() {
   return (
     <>
       <Header />
-      <main className="auth-page page-transition">
-        <form className="auth-card" onSubmit={handleSubmit}>
+      <main className="auth-page login-auth-page page-transition">
+        <img className="login-page-logo" src={logoNewTech} alt="NewTech Cursos" />
+
+        <form className="auth-card login-card" onSubmit={handleSubmit}>
           <p className="eyebrow">Acesso</p>
           <h1>Entrar na NewTech</h1>
+          <p className="auth-subtitle">Acesse sua conta para continuar seus cursos.</p>
 
           {error && <p className="error">{error}</p>}
 

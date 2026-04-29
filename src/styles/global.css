@@ -462,6 +462,48 @@ textarea {
   background: linear-gradient(135deg, var(--blue-light), var(--white));
 }
 
+.login-auth-page {
+  position: relative;
+  overflow: hidden;
+  padding: 92px 16px 56px;
+  background:
+    radial-gradient(circle at 12% 16%, rgba(255, 255, 255, 0.92), transparent 26%),
+    radial-gradient(circle at 88% 84%, rgba(226, 232, 240, 0.88), transparent 30%),
+    #F3F6FB;
+}
+
+.login-auth-page::before,
+.login-auth-page::after {
+  content: "";
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  filter: blur(8px);
+}
+
+.login-auth-page::before {
+  top: -130px;
+  right: -90px;
+}
+
+.login-auth-page::after {
+  bottom: -150px;
+  left: -100px;
+  background: rgba(226, 232, 240, 0.78);
+}
+
+.login-page-logo {
+  position: absolute;
+  top: 22px;
+  left: 28px;
+  z-index: 1;
+  width: min(230px, 44vw);
+  height: auto;
+  display: block;
+}
+
 .auth-card {
   width: min(460px, 100%);
   background: var(--white);
@@ -469,6 +511,19 @@ textarea {
   border-radius: 26px;
   box-shadow: var(--shadow);
   border: 1px solid var(--border);
+}
+
+.login-card {
+  position: relative;
+  z-index: 1;
+  padding: 38px;
+  border-radius: 30px;
+  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.14);
+}
+
+.auth-subtitle {
+  margin-top: 8px;
+  color: var(--gray);
 }
 
 .auth-card label,

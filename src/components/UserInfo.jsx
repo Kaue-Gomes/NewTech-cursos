@@ -13,11 +13,11 @@ export default function UserInfo({ user }) {
     : "US";
 
   return (
-    <Link to="/minha-conta" className="user-info" title="Ver informações da conta">
+    <Link to="/minha-conta" className="user-info" title="Ver minha conta">
       <span className="user-avatar">{initials}</span>
       <span className="user-text">
-        <strong>{user.name}</strong>
-        <small>{user.role === "admin" ? "Administrador" : "Aluno"}</small>
+        <strong>{user.name?.split(" ")[0] || user.name}</strong>
+        <small>{user.role === "admin" ? "Admin" : "Aluno"}</small>
       </span>
     </Link>
   );

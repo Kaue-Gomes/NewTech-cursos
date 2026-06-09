@@ -1,105 +1,47 @@
-import { initialCourses } from "../data/initialCourses.js";
+import { callApi } from "./api.js";
+import { getCurrentUser } from "./auth.js";
 
-const COURSES_KEY = "newtech_courses";
-const ENROLLMENTS_KEY = "newtech_enrollments";
-
-export function getCourses() {
-  const saved = localStorage.getItem(COURSES_KEY);
-
-  if (!saved) {
-    localStorage.setItem(COURSES_KEY, JSON.stringify(initialCourses));
-    return initialCourses;
-  }
-
-  return JSON.parse(saved);
+export async function getCourses() {
+  const result = await callApi("getCourses");
+  return result.data ?? [];
 }
 
-export function saveCourses(courses) {
-  localStorage.setItem(COURSES_KEY, JSON.stringify(courses));
+export async function getCourseById(id) {
+  const result = await callApi("getCourseById", { courseId: Number(id) });
+  return result.data ?? null;
 }
 
-export function getCourseById(id) {
-  return getCourses().find((course) => String(course.id) === String(id));
+export async function getCourseBySlug(slug) {
+  const result = await callApi("getCourseBySlug", { slug });
+  return result.data ?? null;
 }
 
-export function addCourse(course) {
-  const courses = getCourses();
-  const newCourse = {
-    ...course,
-    id: Date.now()
-  };
-
-  const updated = [...courses, newCourse];
-  saveCourses(updated);
-  return newCourse;
+export async function addCourse(course) {
+  const result = await callApi("addCourse", course);
+  return result.data;
 }
 
-export function updateCourse(id, courseData) {
-  const updated = getCourses().map((course) =>
-    String(course.id) === String(id) ? { ...course, ...courseData } : course
-  );
-
-  saveCourses(updated);
-  return updated;
+export async function updateCourse(id, courseData) {
+  const result = await callApi("updateCourse", { id: Number(id), ...courseData });
+  return result.data;
 }
 
-export function deleteCourse(id) {
-  const updated = getCourses().filter((course) => String(course.id) !== String(id));
-  saveCourses(updated);
-  return updated;
+export async function deleteCourse(id) {
+  await callApi("deleteCourse", { id: Number(id) });
+  return getCourses();
 }
 
-export function getEnrollments() {
-  return JSON.parse(localStorage.getItem(ENROLLMENTS_KEY)) || [];
+export async function enrollStudent(email, courseId) {
+  await callApi("enrollStudent", { email, courseId: Number(courseId) });
 }
 
-export function enrollStudent(email, courseId) {
-  const enrollments = getEnrollments();
-  const alreadyExists = enrollments.some(
-    (item) => item.email === email && String(item.courseId) === String(courseId)
-  );
-
-  if (!alreadyExists) {
-    const updated = [
-      ...enrollments,
-      {
-        id: Date.now(),
-        email,
-        courseId,
-        date: new Date().toISOString(),
-        status: "Inscrito",
-        paymentStatus: "Pendente",
-        orderNumber: `NT-${Date.now()}`
-      }
-    ];
-    localStorage.setItem(ENROLLMENTS_KEY, JSON.stringify(updated));
-    return updated;
-  }
-
-  return enrollments;
+export async function getStudentCourses(email) {
+  const result = await callApi("getStudentCourses", { email });
+  return result.data ?? [];
 }
 
-export function getStudentCourses(email) {
-  const courses = getCourses();
-  const enrollments = getEnrollments();
-
-  return courses.filter((course) =>
-    enrollments.some(
-      (item) => item.email === email && String(item.courseId) === String(course.id)
-    )
-  );
-}
-
-
-export function getStudentEnrollments(email) {
-  const courses = getCourses();
-  const enrollments = getEnrollments().filter((item) => item.email === email);
-
-  return enrollments.map((enrollment) => {
-    const course = courses.find((item) => String(item.id) === String(enrollment.courseId));
-    return {
-      ...enrollment,
-      course
-    };
-  }).filter((item) => item.course);
+export async function getStudentEnrollments(email) {
+  const targetEmail = email || getCurrentUser()?.email;
+  const result = await callApi("getStudentEnrollments", { email: targetEmail });
+  return result.data ?? [];
 }

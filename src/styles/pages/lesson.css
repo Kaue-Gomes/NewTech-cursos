@@ -1,0 +1,130 @@
+.lesson-page-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.lesson-page-main {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.lesson-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.lesson-completed-badge {
+  color: var(--color-success, #15803d);
+  font-weight: 700;
+  font-size: var(--text-sm);
+}
+
+.lesson-sidebar {
+  position: sticky;
+  top: calc(var(--header-height) + var(--space-4));
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  max-height: calc(100vh - var(--header-height) - var(--space-8));
+  overflow: auto;
+}
+
+.lesson-sidebar h3 {
+  margin-bottom: var(--space-4);
+}
+
+.lesson-sidebar-module {
+  margin-bottom: var(--space-4);
+}
+
+.lesson-sidebar-module__title {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.lesson-sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space-1);
+}
+
+.lesson-sidebar li a {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  color: var(--color-text-soft);
+}
+
+.lesson-sidebar li.active a,
+.lesson-sidebar li a:hover {
+  background: var(--color-surface-muted);
+  color: var(--color-brand);
+}
+
+.lesson-sidebar-icon {
+  display: grid;
+  place-items: center;
+  width: 18px;
+}
+
+.lesson-description,
+.lesson-materials,
+.lesson-comments-placeholder {
+  margin-top: var(--space-8);
+}
+
+.lesson-materials ul {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.lesson-materials a {
+  display: inline-flex;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-muted);
+}
+
+.lesson-comments-placeholder {
+  padding: var(--space-5);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-muted);
+}
+
+.lesson-navigation {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
+}
+
+@media (max-width: 900px) {
+  .lesson-page-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lesson-sidebar {
+    position: static;
+    max-height: none;
+    order: -1;
+  }
+}

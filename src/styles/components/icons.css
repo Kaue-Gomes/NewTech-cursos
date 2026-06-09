@@ -1,0 +1,50 @@
+/* Controle global de ícones Lucide e SVG inline */
+.btn svg,
+.admin-sidebar button svg,
+.breadcrumb svg,
+.meta-list svg,
+.footer-contact-item svg,
+.kpi-tile > svg:first-child,
+.error svg,
+.success svg,
+.demo-logins strong svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+}
+
+.input-with-icon > svg:first-of-type {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+}
+
+.btn-sm svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.btn-lg svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.brand-mark svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.timeline-marker svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.eyebrow svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.password-toggle svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}

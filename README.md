@@ -116,41 +116,28 @@ src/
 ## ⚙️ Como rodar o projeto
 
 ```bash
-# instalar dependências
+# 1. Copie as variáveis de ambiente
+cp .env.example .env
+# Edite .env com URL e chave anon do Supabase
+
+# 2. Instalar dependências
 npm install
 
-# rodar o projeto
+# 3. Rodar o projeto
 npm run dev
+```
 
+### Variáveis de ambiente (`.env`)
 
+| Variável | Descrição |
+|----------|-----------|
+| `VITE_SUPABASE_URL` | URL do projeto Supabase |
+| `VITE_SUPABASE_ANON_KEY` | Chave pública (anon) do Supabase |
+| `VITE_SHOW_DEMO_LOGINS` | `true` para exibir credenciais demo no login |
+| `VITE_DEMO_*` | E-mails e senhas de teste (apenas dev) |
 
-🔑 Acessos de Teste
-🛠️ Administrador
+> O arquivo `.env` está no `.gitignore` e **não deve ser commitado**.
 
-Email: admin@newtech.com
+### Acessos de teste
 
-Senha: admin123
-
-👨‍🎓 Aluno
-
-Email: aluno@newtech.com
-
-Senha: aluno123
-
-
-
-💾 Persistência de Dados
-
-O projeto utiliza LocalStorage para simular:
-
-Usuários
-Cursos
-Inscrições
-
-
-📈 Melhorias Futuras
-Integração com backend real (API)
-Sistema de pagamento
-Upload de imagens
-Controle de permissões avançado
-Dashboard com métricas
+Configure no `.env` (veja `.env.example`). Em produção, defina `VITE_SHOW_DEMO_LOGINS=false`.

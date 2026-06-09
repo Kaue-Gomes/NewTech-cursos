@@ -1,0 +1,99 @@
+.dashboard-hero {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: var(--brand-rail-width) solid var(--color-accent);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6) var(--space-6) var(--space-6) var(--space-5);
+  margin-bottom: var(--space-6);
+  box-shadow: var(--shadow-1);
+}
+
+.dashboard-hero h1 {
+  margin-top: var(--space-2);
+}
+
+.continue-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-4);
+  align-items: center;
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: var(--brand-rail-width) solid var(--color-brand);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-6);
+  box-shadow: var(--shadow-1);
+}
+
+.continue-card h3 {
+  margin-bottom: var(--space-2);
+}
+
+@media (max-width: 768px) {
+  .continue-card {
+    grid-template-columns: 1fr;
+  }
+}
+
+.certificate-page {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.certificate-card {
+  background: var(--color-surface);
+  border: 2px solid var(--color-navy-900);
+  border-radius: var(--radius-lg);
+  padding: var(--space-10);
+  text-align: center;
+  position: relative;
+  box-shadow: var(--shadow-2);
+}
+
+.certificate-card::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 1px solid var(--color-border);
+  pointer-events: none;
+}
+
+.certificate-seal {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto var(--space-4);
+  object-fit: contain;
+}
+
+.certificate-code {
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  letter-spacing: 0.1em;
+  margin: var(--space-4) 0;
+  color: var(--color-navy-900);
+}
+
+.certificate-qr {
+  width: 120px;
+  height: 120px;
+  margin: var(--space-6) auto 0;
+  border: 1px solid var(--color-border);
+  padding: var(--space-2);
+  background: white;
+  object-fit: contain;
+}
+
+.page-header {
+  margin-bottom: var(--space-8);
+  max-width: 760px;
+}
+
+.page-header h1 {
+  margin-bottom: var(--space-3);
+}
+
+.page-header p {
+  color: var(--color-text-soft);
+  font-size: var(--text-base);
+}

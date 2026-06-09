@@ -1,0 +1,6 @@
+dist/
+.DS_Store
+*.log
+.env
+newtech-cursos.zip
+newtech_cursos.sql

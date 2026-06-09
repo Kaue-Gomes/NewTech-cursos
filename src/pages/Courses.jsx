@@ -1,21 +1,30 @@
-import { Link } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Library } from "lucide-react";
 import Header from "../components/Header.jsx";
 import Footer from "../components/Footer.jsx";
-import CourseCard from "../components/CourseCard.jsx";
+import Breadcrumb from "../components/layout/Breadcrumb.jsx";
+import BrandRail from "../components/ui/BrandRail.jsx";
+import CourseCard from "../components/course/CourseCard.jsx";
+import EmptyState from "../components/ui/EmptyState.jsx";
+import { SkeletonList } from "../components/ui/Skeleton.jsx";
 import { getCourses } from "../services/storage.js";
+import emptyCourses from "../assets/logoempe.png";
 
 export default function Courses() {
   const [search, setSearch] = useState("");
-  const courses = getCourses();
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getCourses()
+      .then(setCourses)
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
 
   const filteredCourses = useMemo(() => {
     const term = search.toLowerCase().trim();
-
-    if (!term) {
-      return courses;
-    }
-
+    if (!term) return courses;
     return courses.filter((course) =>
       course.title.toLowerCase().includes(term) ||
       course.description.toLowerCase().includes(term) ||
@@ -29,35 +38,49 @@ export default function Courses() {
       <Header />
       <main className="page page-transition">
         <div className="container">
-          <Link to="/" className="back-link">← Voltar para Home</Link>
+          <Breadcrumb items={[
+            { label: "Início", to: "/" },
+            { label: "Cursos NR" },
+          ]} />
 
-          <div className="page-header">
-            <p className="eyebrow">Todos os cursos</p>
-            <h1>Catálogo NewTech</h1>
-            <p>Escolha um curso, veja os detalhes e faça sua inscrição na plataforma.</p>
-          </div>
-
-          <div className="search-box">
-            <input
-              type="text"
-              placeholder="Pesquisar por curso, instrutor ou nível..."
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-            />
-          </div>
-
-          {filteredCourses.length === 0 ? (
-            <div className="empty-state">
-              <h2>Nenhum curso encontrado.</h2>
-              <p>Tente pesquisar por outro termo.</p>
+          <div className="section-header">
+            <BrandRail>
+              <div>
+                <span className="eyebrow eyebrow-brand"><Library size={14} /> Catálogo</span>
+                <h1>Cursos NewTech</h1>
+                <p style={{ color: "var(--color-text-soft)", marginTop: "var(--space-2)" }}>
+                  Capacitação técnica com certificação e módulos rastreáveis.
+                </p>
+              </div>
+            </BrandRail>
+            <div className="search-field" style={{ maxWidth: 360 }}>
+              <input
+                type="search"
+                placeholder="Pesquisar por curso, instrutor ou nível..."
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                aria-label="Pesquisar cursos"
+              />
             </div>
-          ) : (
+          </div>
+
+          {loading ? <SkeletonList count={6} /> : null}
+          {!loading && filteredCourses.length === 0 ? (
+            <EmptyState
+              illustration={<img src={emptyCourses} alt="" />}
+              title="Nenhum curso encontrado"
+              description="Tente pesquisar por outro termo, NR ou área."
+              actionLabel="Limpar pesquisa"
+              onAction={() => setSearch("")}
+            />
+          ) : null}
+          {!loading && filteredCourses.length > 0 ? (
             <div className="courses-grid">
               {filteredCourses.map((course) => (
-                <CourseCard key={course.id} course={course} />
+                <CourseCard key={course.id} course={course} status="available" />
               ))}
             </div>
-          )}
+          ) : null}
         </div>
       </main>
       <Footer />

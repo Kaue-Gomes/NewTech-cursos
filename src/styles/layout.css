@@ -1,0 +1,82 @@
+.container {
+  width: min(100% - var(--space-8), var(--container-max));
+  margin-inline: auto;
+}
+
+.page {
+  padding: var(--space-10) 0 var(--space-16);
+}
+
+.page-shell {
+  min-height: calc(100vh - var(--header-height));
+}
+
+.technical-grid-bg {
+  position: relative;
+}
+
+.technical-grid-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--grid-line-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line-color) 1px, transparent 1px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black, transparent);
+}
+
+.page-grid {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .dashboard-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-6);
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-4);
+}
+
+.section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.section-header input[type="search"],
+.section-header input[type="text"] {
+  min-width: min(100%, 280px);
+}
+
+.progress-strip {
+  position: sticky;
+  top: var(--header-height);
+  z-index: 40;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-3) 0;
+  box-shadow: var(--shadow-1);
+}

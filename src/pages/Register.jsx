@@ -1,12 +1,17 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import Header from "../components/Header.jsx";
-import Footer from "../components/Footer.jsx";
+import { Eye, EyeOff, Lock, Mail, MapPin, Phone, TriangleAlert, User, UserPlus } from "lucide-react";
+import BrandRail from "../components/ui/BrandRail.jsx";
 import { registerStudent } from "../services/auth.js";
+import { useToast } from "../context/ToastContext.jsx";
+import authIllustration from "../assets/logo-horizontal-subtitle.png";
+import logoHorizontal from "../assets/logo-horizontal.png";
 
 export default function Register() {
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -18,65 +23,127 @@ export default function Register() {
     number: "",
     district: "",
     city: "",
-    state: ""
+    state: "",
   });
 
   function handleChange(event) {
     setForm({ ...form, [event.target.name]: event.target.value });
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    const result = registerStudent(form);
+    setError("");
 
-    if (!result.ok) {
-      setError(result.message);
-      return;
+    try {
+      const result = await registerStudent(form);
+      if (!result.ok) {
+        setError(result.message);
+        return;
+      }
+      showToast("Cadastro realizado com sucesso.", "success");
+      navigate("/login");
+    } catch (submitError) {
+      setError(submitError.message || "Não foi possível concluir o cadastro.");
     }
-
-    alert("Cadastro realizado com sucesso!");
-    navigate("/login");
   }
 
   return (
-    <>
-      <Header />
-      <main className="auth-page page-transition">
-        <form className="auth-card register-card" onSubmit={handleSubmit}>
-          <p className="eyebrow">Cadastro</p>
-          <h1>Criar conta de aluno</h1>
+    <main className="auth-page page-transition technical-grid-bg">
+      <aside className="auth-aside">
+        <Link to="/" className="auth-aside-brand">
+          <img src={logoHorizontal} alt="NewTech Cursos" className="auth-aside-logo" />
+        </Link>
+        <div className="auth-aside-content">
+          <img src={authIllustration} alt="" style={{ maxWidth: 280, marginBottom: "var(--space-6)" }} />
+          <h2>Cadastro institucional para alunos e empresas.</h2>
+          <p>Crie sua conta e inscreva-se nos cursos NR com acompanhamento de progresso.</p>
+        </div>
+      </aside>
 
-          {error && <p className="error">{error}</p>}
+      <section className="auth-main">
+        <form className="auth-card brand-rail brand-rail--full" onSubmit={handleSubmit}>
+          <span className="eyebrow eyebrow-brand">Cadastro</span>
+          <BrandRail><h1>Criar conta</h1></BrandRail>
+          <p className="auth-subtitle">Preencha seus dados para acessar a plataforma.</p>
 
-          <label>Nome completo<input name="name" value={form.name} onChange={handleChange} required /></label>
-          <label>E-mail<input name="email" type="email" value={form.email} onChange={handleChange} required /></label>
-          <label>Senha<input name="password" type="password" value={form.password} onChange={handleChange} required /></label>
+          {error ? (
+            <div className="error" role="alert">
+              <TriangleAlert size={16} />
+              <span>{error}</span>
+            </div>
+          ) : null}
+
+          <label>
+            Nome completo
+            <div className="input-with-icon">
+              <User size={16} />
+              <input name="name" value={form.name} onChange={handleChange} required />
+            </div>
+          </label>
 
           <div className="form-row">
-            <label>Telefone<input name="phone" value={form.phone} onChange={handleChange} /></label>
-            <label>CPF/documento<input name="document" value={form.document} onChange={handleChange} /></label>
+            <label>
+              E-mail
+              <div className="input-with-icon">
+                <Mail size={16} />
+                <input name="email" type="email" value={form.email} onChange={handleChange} required />
+              </div>
+            </label>
+            <label>
+              Telefone
+              <div className="input-with-icon">
+                <Phone size={16} />
+                <input name="phone" value={form.phone} onChange={handleChange} />
+              </div>
+            </label>
           </div>
+
+          <label>
+            Senha
+            <div className="input-with-icon">
+              <Lock size={16} />
+              <input
+                name="password"
+                type={showPassword ? "text" : "password"}
+                value={form.password}
+                onChange={handleChange}
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </label>
 
           <div className="form-row">
-            <label>CEP<input name="cep" value={form.cep} onChange={handleChange} /></label>
-            <label>Rua<input name="street" value={form.street} onChange={handleChange} /></label>
+            <label>
+              CEP
+              <input name="cep" value={form.cep} onChange={handleChange} />
+            </label>
+            <label>
+              Cidade
+              <div className="input-with-icon">
+                <MapPin size={16} />
+                <input name="city" value={form.city} onChange={handleChange} />
+              </div>
+            </label>
           </div>
 
-          <div className="form-row">
-            <label>Número<input name="number" value={form.number} onChange={handleChange} /></label>
-            <label>Bairro<input name="district" value={form.district} onChange={handleChange} /></label>
-          </div>
+          <button type="submit" className="btn btn-primary btn-full btn-lg">
+            <UserPlus size={16} />
+            Cadastrar
+          </button>
 
-          <div className="form-row">
-            <label>Cidade<input name="city" value={form.city} onChange={handleChange} /></label>
-            <label>Estado<input name="state" value={form.state} onChange={handleChange} /></label>
-          </div>
-
-          <button className="btn btn-primary full">Cadastrar</button>
-          <Link to="/login" className="center-link">Já tenho conta</Link>
+          <p className="center-link">
+            Já possui conta? <Link to="/login">Entrar</Link>
+          </p>
         </form>
-      </main>
-      <Footer />
-    </>
+      </section>
+    </main>
   );
 }

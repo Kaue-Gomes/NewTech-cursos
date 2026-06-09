@@ -1,136 +1,135 @@
 import { Link } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { ArrowRight, ShieldCheck, HardHat, Zap } from "lucide-react";
 import Header from "../components/Header.jsx";
 import Footer from "../components/Footer.jsx";
-import CourseCard from "../components/CourseCard.jsx";
-import logoHero from "../assets/logo-square.jpeg";
+import CourseCard from "../components/course/CourseCard.jsx";
+import BrandRail from "../components/ui/BrandRail.jsx";
+import EmptyState from "../components/ui/EmptyState.jsx";
+import { SkeletonList } from "../components/ui/Skeleton.jsx";
 import { getCourses } from "../services/storage.js";
+import { getPlatformStats } from "../services/platform.js";
+import heroIllustration from "../assets/logo-horizontal.png";
+import emptyCourses from "../assets/logoempe.png";
 
 export default function Home() {
   const [search, setSearch] = useState("");
-  const courses = getCourses();
+  const [courses, setCourses] = useState([]);
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([getCourses(), getPlatformStats()])
+      .then(([coursesData, statsData]) => {
+        setCourses(coursesData);
+        setStats(statsData);
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
 
   const filteredCourses = useMemo(() => {
     const term = search.toLowerCase().trim();
-
-    if (!term) {
-      return courses.slice(0, 6);
-    }
-
-    return courses
-      .filter((course) =>
-        course.title.toLowerCase().includes(term) ||
-        course.description.toLowerCase().includes(term) ||
-        course.instructor.toLowerCase().includes(term)
-      )
-      .slice(0, 6);
+    if (!term) return courses.slice(0, 6);
+    return courses.filter((course) =>
+      course.title.toLowerCase().includes(term) ||
+      course.description.toLowerCase().includes(term)
+    ).slice(0, 6);
   }, [courses, search]);
 
   return (
     <>
       <Header />
-
       <main className="page-transition">
-        <section className="hero">
-          <div className="container hero-grid">
+        <section className="hero-v2 technical-grid-bg">
+          <div className="container hero-v2-grid">
             <div>
-              <p className="eyebrow">NewTech Cursos</p>
-              <h1>Capacitação técnica para segurança, engenharia e normas regulamentadoras.</h1>
-              <p className="hero-text">
-                Aprenda com uma plataforma simples, moderna e focada em cursos profissionalizantes
-                para quem deseja evoluir no mercado de trabalho.
+              <span className="eyebrow eyebrow-brand">Plataforma NewTech</span>
+              <BrandRail full>
+                <h1>Capacitação técnica e certificação NR para profissionais da indústria</h1>
+              </BrandRail>
+              <p className="hero-v2-lead">
+                Cursos para técnicos, eletricistas, engenheiros e equipes que precisam
+                cumprir normas regulamentadoras com rastreabilidade e credibilidade.
               </p>
-
-              <div className="hero-search">
-                <input
-                  type="text"
-                  placeholder="Pesquisar curso..."
-                  value={search}
-                  onChange={(event) => setSearch(event.target.value)}
-                />
-                <Link to="/cursos" className="btn btn-primary">Ver todos</Link>
+              <div className="hero-v2-actions">
+                <Link to="/cursos" className="btn btn-primary btn-lg">
+                  Ver cursos NR
+                  <ArrowRight size={18} />
+                </Link>
+                <Link to="/cadastro" className="btn btn-secondary btn-lg">
+                  Sou empresa / aluno
+                </Link>
               </div>
-
-              <div className="hero-actions">
-                <Link to="/cursos" className="btn btn-primary">Ver cursos</Link>
-                <Link to="/login" className="btn btn-outline">Acessar conta</Link>
+              <div className="hero-stats">
+                <div className="hero-stat">
+                  <strong>{stats?.activeCourses ?? "—"}</strong>
+                  <span>Cursos ativos</span>
+                </div>
+                <div className="hero-stat">
+                  <strong>{stats?.totalStudents ?? "—"}</strong>
+                  <span>Alunos cadastrados</span>
+                </div>
+                <div className="hero-stat">
+                  <strong>{stats?.totalEnrollments ?? "—"}</strong>
+                  <span>Inscrições realizadas</span>
+                </div>
               </div>
             </div>
-
-            <div className="hero-logo-card">
-              <img src={logoHero} alt="NewTech Cursos" />
+            <div className="hero-visual">
+              <img src={heroIllustration} alt="" />
             </div>
           </div>
         </section>
 
-        <section className="section white">
-          <div className="container split">
-            <div>
-              <p className="eyebrow">Sobre a plataforma</p>
-              <h2>Do cadastro do curso até a inscrição do aluno.</h2>
-            </div>
-            <p>
-              A NewTech permite que o aluno visualize cursos, consulte detalhes e realize sua
-              inscrição diretamente na plataforma. O administrador gerencia a vitrine cadastrando,
-              editando e removendo cursos pelo painel.
-            </p>
-          </div>
-        </section>
-
-        <section className="section">
+        <section className="page">
           <div className="container">
-            <div className="section-title-row">
-              <div>
-                <p className="eyebrow">Cursos disponíveis</p>
-                <h2>Escolha sua próxima capacitação</h2>
+            <div className="section-header">
+              <BrandRail>
+                <div>
+                  <span className="eyebrow">Catálogo técnico</span>
+                  <h2>Cursos em destaque</h2>
+                </div>
+              </BrandRail>
+              <div className="search-field" style={{ maxWidth: 320 }}>
+                <input
+                  type="search"
+                  placeholder="Filtrar por NR, área ou instrutor..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  aria-label="Filtrar cursos"
+                />
               </div>
-              <Link to="/cursos" className="btn btn-outline">Ver todos</Link>
             </div>
 
-            {filteredCourses.length === 0 ? (
-              <div className="empty-state">
-                <h2>Nenhum curso encontrado.</h2>
-                <p>Tente pesquisar por outro termo.</p>
-              </div>
-            ) : (
+            {loading ? <SkeletonList count={3} /> : null}
+            {!loading && filteredCourses.length === 0 ? (
+              <EmptyState
+                illustration={<img src={emptyCourses} alt="" />}
+                title="Nenhum curso encontrado"
+                description="Ajuste os filtros ou explore o catálogo completo de capacitação NR."
+                actionLabel="Ver todos os cursos"
+                actionTo="/cursos"
+              />
+            ) : null}
+            {!loading && filteredCourses.length > 0 ? (
               <div className="courses-grid">
                 {filteredCourses.map((course) => (
-                  <CourseCard key={course.id} course={course} />
+                  <CourseCard key={course.id} course={course} status="available" />
                 ))}
               </div>
-            )}
+            ) : null}
           </div>
         </section>
 
-        <section className="section white">
-          <div className="container features-grid">
-            <div className="feature-card">
-              <span>🎓</span>
-              <h3>Aprendizado objetivo</h3>
-              <p>Informações claras sobre carga horária, aulas, nível e conteúdo do curso.</p>
-            </div>
-            <div className="feature-card">
-              <span>✅</span>
-              <h3>Inscrição simples</h3>
-              <p>O aluno escolhe o curso e realiza a inscrição diretamente na plataforma.</p>
-            </div>
-            <div className="feature-card">
-              <span>🛠️</span>
-              <h3>Gestão administrativa</h3>
-              <p>O administrador cadastra, edita e exclui cursos de forma prática.</p>
-            </div>
-          </div>
-        </section>
-
-        <section className="section cta">
-          <div className="container cta-box">
-            <h2>Comece sua capacitação com a NewTech.</h2>
-            <p>Veja os cursos disponíveis e escolha o treinamento ideal para seu momento profissional.</p>
-            <Link to="/cursos" className="btn btn-light">Explorar cursos</Link>
+        <section className="page" style={{ paddingTop: 0 }}>
+          <div className="container feature-grid kpi-grid">
+            <div className="kpi-tile kpi-tile--feature"><ShieldCheck size={20} /><strong>NR10 / NR35</strong><span>Segurança do trabalho</span></div>
+            <div className="kpi-tile kpi-tile--feature"><Zap size={20} /><strong>Eletricidade</strong><span>Instalações e riscos</span></div>
+            <div className="kpi-tile kpi-tile--feature"><HardHat size={20} /><strong>Altura</strong><span>Capacitação essencial</span></div>
           </div>
         </section>
       </main>
-
       <Footer />
     </>
   );
